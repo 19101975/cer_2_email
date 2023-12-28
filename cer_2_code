@@ -1,22 +1,26 @@
 // ID library Line notify: 1vXbZfRP-7AqwqV7k0fGAnVjCe34pYyI2WdZBJw1Y8U0_DuEbo5fN32P9
 // เปิด Drive API, Sheet API, Slide API
+//https://docs.google.com/presentation/d/1pvLdS_mODH8ZL-3SYYToamr7RB9O5U7XVquHWX4xQHQ/edit?usp=sharing
+//https://docs.google.com/spreadsheets/d/1yrntUl4oHcvzYUZO3k_HTS3X0zdwqAEuG-v7bT28-i4/edit?usp=sharing
+//https://drive.google.com/drive/folders/140muF1vGT81FT_srHjYYQJAT4Or3UCtD
 
-var TEMPLATE_ID = '10fT8whSPhbk_xlqn9v_8bN5RqskiN2s_xd9oqn_9IA0' // *id google slide เกียรติบัตร  //แก้จุดที่ 1
-var TOTAL_SCORE = 15     // ระบุจำนวนข้อสอบที่มี 
-var PASS_PERCENT = 80      // กำหนดเกณฑ์ผ่าน
-var SAVE_FOLDER_ID = '1mxmFWk7ObUSv-jTOyQI6uPnNyMPNECC9';  //สร้าง folder เก็บ pdf ตั้งชื่อ เปิดแชร์ ให้คนมีลิงก์ ดูได้ เอา id มาวาง //แก้จุดที่ 2
-var USER_SUBJECT = 'ภาษาอังกฤษ'     // วิชาที่สอบ
-var SHEET_ID = '1r0H3KKwwIdHLkrU0ZwtJY270ZzVTX_u1isGO5qfbgec'
-var LINE_TOKEN = 'A16GcDRECpLuO06kNxAr5EkptC6ilWXkFKNybydoKzV' //. Test Yhafar : กำหนดตัวแปร Token แล้วใส่ เลข Token Line
-var EMAIL_TITLE ='แจ้งส่งเกียรติบัตร แบบทดสอบออนไลน์ O-NET ชั้นประถมศึกษาปีที่ 6 วิชาภาษาอังกฤษ ระยะที่ 1 ปีการศึกษา 2565' 
-var EMAIL_TITLE_FAIL = 'แจ้งผลสอบ แบบทดสอบออนไลน์ O-NET ชั้นประถมศึกษาปีที่ 6 วิชาภาษาอังกฤษ ระยะที่ 1 ปีการศึกษา 2565'
-var SEARCH_PAGE = 'https://sites.google.com/opse.moe.go.th/o-net-by-narapeo-2565/main-search/search-eng'
+var TEMPLATE_ID = '1pvLdS_mODH8ZL-3SYYToamr7RB9O5U7XVquHWX4xQHQ' // *id google slide เกียรติบัตร  //แก้จุดที่ 1
+var TOTAL_SCORE = 10     // ระบุจำนวนข้อสอบที่มี 
+var PASS_PERCENT = 60      // กำหนดเกณฑ์ผ่าน
+var SAVE_FOLDER_ID = '140muF1vGT81FT_srHjYYQJAT4Or3UCtD';  //สร้าง folder เก็บ pdf ตั้งชื่อ เปิดแชร์ ให้คนมีลิงก์ ดูได้ เอา id มาวาง //แก้จุดที่ 2
+var USER_SUBJECT = 'วิชาคณิตศาสตร์ ระดับชั้นประถมศึกษาปีที่ ๖ (ระยะที่ ๑) ปีการศึกษา ๒๕๖๖'     // วิชาที่สอบ
+var SHEET_ID = '1yrntUl4oHcvzYUZO3k_HTS3X0zdwqAEuG-v7bT28-i4'
+//var LINE_TOKEN = 'A16GcDRECpLuO06kNxAr5EkptC6ilWXkFKNybydoKzV' //. Test Yhafar : กำหนดตัวแปร Token แล้วใส่ เลข Token Line
+var EMAIL_TITLE ='แจ้งส่งเกียรติบัตร แบบทดสอบออนไลน์ O-NET ชั้นประถมศึกษาปีที่ 6 วิชาภาษาอังกฤษ ระยะที่ 1 ปีการศึกษา 2566' 
+var EMAIL_TITLE_FAIL = 'แจ้งผลสอบ แบบทดสอบออนไลน์ O-NET ชั้นประถมศึกษาปีที่ 6 วิชาภาษาอังกฤษ ระยะที่ 1 ปีการศึกษา 2566'
+var SEARCH_PAGE = 'xxx'
 // กด save scirpt นี้ กดบ่อย ๆ ก็ดี
 // กำหนด trigger เป็น เมื่อส่ง form
 //--------------------------------จบ------------------------------------------
 //var email_column = 'ที่อยู่อีเมล'
 var date = new Date();
 var YEAR = date.getFullYear();
+
 function createPdf(event) {
   if (TEMPLATE_ID === '') {
     throw new Error('TEMPLATE_ID needs to be defined in Code.gs')
@@ -55,13 +59,19 @@ function createPdf(event) {
   var activeCell
   var ID = null
   var recipient = null
-  var user_score = activeRow[0][1]  // คะแนน
-  var user_email = activeRow[0][2]
+
+//sheet การตอบกลับฟอร์ม 1
+//A0ประทับเวลา	B1ที่อยู่อีเมล	C2คะแนน	D3ชื่อนามสกุล	
+//E4อีเมล(สำหรับส่งเกียรติบัตร)	F5โรงเรียน	G6เลขที่เกียรติบัตร	H7สังกัด
+
+  var user_score = activeRow[0][2]  // คะแนน
+  var user_email = activeRow[0][4]  //email
   var user_name = activeRow[0][3]   // ชื่อ - สกุล  
-  var school_name = activeRow[0][4]
-  var user_id = activeRow[0][5]
+  var school_name = activeRow[0][5] //school
+  var user_id = activeRow[0][6] //id
   var percentage = Utilities.formatString("%.2f", (user_score / TOTAL_SCORE) * 100);
-  //Logger.log(user_name+school_name+percentage)
+  Logger.log(user_score+' '+user_email+' '+user_name+' '+school_name+' '+user_id+' '+percentage)
+
   //-------------------------------
   if (percentage >= PASS_PERCENT) {
     //------------------------------------------------------------
@@ -79,7 +89,7 @@ function createPdf(event) {
       // shape.getText().replaceAllText("{{id}}", thaiNumber(certify_running_id));
       shape.getText().replaceAllText("{id}", thaiNumber(user_id));
       shape.getText().replaceAllText("{name}", user_name);
-      // shape.getText().replaceAllText("{position}", user_position);
+      shape.getText().replaceAllText("{subject}", USER_SUBJECT);
       shape.getText().replaceAllText('{school}', school_name);
       shape.getText().replaceAllText("{email}", user_email);
       shape.getText().replaceAllText("{score}", thaiNumber(percentage));
@@ -95,7 +105,7 @@ function createPdf(event) {
     // Line Notify
     //notifyLine()
     // Send Email
-    //sendEmailPass()
+    sendEmailPass()
    
     //-----
     DriveApp.removeFile(pdf_file)
@@ -181,7 +191,7 @@ function createPdfAll(event) {
     //-- Line Notify
      //       notifyLine();
     //-- Send Email
-    //sendEmailPass();
+    sendEmailPass();
     //-----
    //    DriveApp.removeFile(pdf_file)
     count++
