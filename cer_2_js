@@ -1,0 +1,86 @@
+<!-- JavaScript DataTable -->
+<script src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.1/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap5.min.js"></script>
+<!-- Responsive -->
+<script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.2.9/js/responsive.bootstrap5.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.0/js/jquery.dataTables.min.js"></script>
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+  google.script.run.withSuccessHandler(showData).getData();
+ //document.getElementById("loader").style.visibility = "visible";
+  document.getElementById('resp-spinner5').classList.remove("d-none");
+  document.getElementById('resp-spinner6').classList.remove("d-none");
+  document.getElementById('resp-spinner7').classList.remove("d-none");
+  document.getElementById('resp-spinner8').classList.remove("d-none");
+  document.getElementById('resp-spinner9').classList.remove("d-none");
+  document.getElementById('resp-spinner10').classList.remove("d-none");
+  document.getElementById('resp-spinner11').classList.remove("d-none");
+  function showData(dataArray){
+    $(document).ready(function(){
+     //document.getElementById("loader").style.visibility = "hidden";
+     document.getElementById('resp-spinner5').classList.add("d-none");
+     document.getElementById('resp-spinner6').classList.add("d-none");
+     document.getElementById('resp-spinner7').classList.add("d-none");
+     document.getElementById('resp-spinner8').classList.add("d-none");
+     document.getElementById('resp-spinner9').classList.add("d-none");
+     document.getElementById('resp-spinner10').classList.add("d-none");  
+     document.getElementById('resp-spinner11').classList.remove("d-none");
+Swal.fire({
+  imageUrl: 'https://ltschool.web.app/pic/popup1.png',
+  imageWidth: 400,
+  imageHeight: 200,
+  position : 'top',
+  //title: "ระบบสืบค้นเกียรติบัตร",
+  html: 'พิมพ์ชื่อที่ช่องค้นหาหรือ'+ '  '+
+'<br>สอบถามเพิ่มเติมที่ ID LINE : yhafar หรือ โทร 093-6646774 ',   //แก้จุดที่ 8
+//<a href="xxx" target="_blank">ติดต่อเรา</a>',
+showCloseButton: true,
+showConfirmButton: false,
+ // timer: 3000
+})
+      $('#data-table').DataTable({
+        // ข้อมูล
+        data: dataArray,
+      "columnDefs": [
+            {
+                "targets": [ 0 ],
+                "visible": true,
+                "searchable": true
+            }, 
+        ],
+        // หัวคอลัมภ์
+        columns: [
+          {"title":"ชื่อ สกุล"},
+          {"title":"e-mail"},
+          {"title":"โรงเรียน"},
+          { title: "วิชา","className": "dt-center", "targets": "_all" }, 
+          { title: "เลขที่","className": "dt-center", "targets": "_all" },
+          { title: "คะแนน","className": "dt-center", "targets": "_all" },                 
+         {
+          title: "ดาวน์โหลด","width": "5%","className": "dt-center", "targets": "_all",
+          render: function (data, type, row, meta) {   
+            if (type === "display") {
+           data ='  <a target="_blank" href="' + data + '" class="p-2 mb-2 bd-blue-500 text-white"><i class="fas fa-arrow-circle-down"></i> ดาวน์โหลด</a>';
+           }
+            return data;
+          },
+        },
+        ],
+        // ภาษาไทย
+      language: { url: "//cdn.datatables.net/plug-ins/1.10.24/i18n/Thai.json" },
+        // กำหนดเมนูแสดงจำนวนแถว
+      lengthMenu: [
+          [5, 10, 25, 50, 100, -1 ],
+          ['5', '10', '25', '50','100', 'ทั้งหมด' ]
+      ],
+      // การจัดเรียงลำดับของข้อมูลในคอลัมภ์ asc = น้อยไปหามาก desc = มากไปหาน้อย
+      order: [[0, "asc"], [0, "asc"], ],
+      responsive: true,
+      info : false,
+      });
+    });
+  }
+</script>
