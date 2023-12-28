@@ -60,13 +60,15 @@ function createPdf(event) {
 //sheet การตอบกลับฟอร์ม 1
 //A0ประทับเวลา	B1ที่อยู่อีเมล	C2คะแนน	D3ชื่อนามสกุล	
 //E4อีเมล(สำหรับส่งเกียรติบัตร)	F5โรงเรียน	G6เลขที่เกียรติบัตร	H7สังกัด
+//โปรแกรมจะดึงค่าแถวสุดท้าย ของ การตอบกลับฟอร์ม 1
 
   var user_score = activeRow[0][2]  // คะแนน
-  var user_email = activeRow[0][4]  //email
   var user_name = activeRow[0][3]   // ชื่อ - สกุล  
+  var user_email = activeRow[0][4]  //email
   var school_name = activeRow[0][5] //school
-  var user_id = activeRow[0][6] //id
+  var user_id = activeRow[0][6] //id cer
   var percentage = Utilities.formatString("%.2f", (user_score / TOTAL_SCORE) * 100);
+  
   Logger.log(user_score+' '+user_email+' '+user_name+' '+school_name+' '+user_id+' '+percentage)
 
   //-------------------------------
@@ -74,7 +76,7 @@ function createPdf(event) {
     //------------------------------------------------------------
     //-----Make a copy
     var slide_file = DriveApp.getFileById(TEMPLATE_ID).makeCopy()
-    var copyFile = slide_file.makeCopy('V1_เกียรติบัตร' + '_'+USER_SUBJECT+'_'+user_name);
+    var copyFile = slide_file.makeCopy('CER1_' + user_name + '_' + USER_SUBJECT);
     var copyId = copyFile.getId()
     var copyDoc = SlidesApp.openById(copyId);
     var slides = copyDoc.getSlides();
