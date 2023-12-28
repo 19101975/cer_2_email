@@ -1,23 +1,20 @@
 // ID library Line notify: 1vXbZfRP-7AqwqV7k0fGAnVjCe34pYyI2WdZBJw1Y8U0_DuEbo5fN32P9
-// เปิด Drive API, Sheet API, Slide API
-//https://docs.google.com/presentation/d/1pvLdS_mODH8ZL-3SYYToamr7RB9O5U7XVquHWX4xQHQ/edit?usp=sharing
-//https://docs.google.com/spreadsheets/d/1yrntUl4oHcvzYUZO3k_HTS3X0zdwqAEuG-v7bT28-i4/edit?usp=sharing
-//https://drive.google.com/drive/folders/140muF1vGT81FT_srHjYYQJAT4Or3UCtD
+// เปิดการใช้งาน Drive API, google Sheet API, google Slide API
 
-var TEMPLATE_ID = '1pvLdS_mODH8ZL-3SYYToamr7RB9O5U7XVquHWX4xQHQ' // *id google slide เกียรติบัตร  //แก้จุดที่ 1
+var TEMPLATE_ID = 'xxx id TEMP slide xxx' // *id google slide เกียรติบัตร  //แก้จุดที่ 1
 var TOTAL_SCORE = 10     // ระบุจำนวนข้อสอบที่มี 
-var PASS_PERCENT = 60      // กำหนดเกณฑ์ผ่าน
-var SAVE_FOLDER_ID = '140muF1vGT81FT_srHjYYQJAT4Or3UCtD';  //สร้าง folder เก็บ pdf ตั้งชื่อ เปิดแชร์ ให้คนมีลิงก์ ดูได้ เอา id มาวาง //แก้จุดที่ 2
+var PASS_PERCENT = 60      // กำหนดเกณฑ์ผ่านร้อยละ
+var SAVE_FOLDER_ID = 'xxx folder เก็บไฟล์ pdf xxx';  //สร้าง folder เก็บ pdf ตั้งชื่อ เปิดแชร์ ให้คนมีลิงก์ ดูได้ เอา id มาวาง //แก้จุดที่ 2
 var USER_SUBJECT = 'วิชาคณิตศาสตร์ ระดับชั้นประถมศึกษาปีที่ ๖ (ระยะที่ ๑) ปีการศึกษา ๒๕๖๖'     // วิชาที่สอบ
-var SHEET_ID = '1yrntUl4oHcvzYUZO3k_HTS3X0zdwqAEuG-v7bT28-i4'
-//var LINE_TOKEN = 'A16GcDRECpLuO06kNxAr5EkptC6ilWXkFKNybydoKzV' //. Test Yhafar : กำหนดตัวแปร Token แล้วใส่ เลข Token Line
-var EMAIL_TITLE ='แจ้งส่งเกียรติบัตร แบบทดสอบออนไลน์ O-NET ชั้นประถมศึกษาปีที่ 6 วิชาภาษาอังกฤษ ระยะที่ 1 ปีการศึกษา 2566' 
-var EMAIL_TITLE_FAIL = 'แจ้งผลสอบ แบบทดสอบออนไลน์ O-NET ชั้นประถมศึกษาปีที่ 6 วิชาภาษาอังกฤษ ระยะที่ 1 ปีการศึกษา 2566'
-var SEARCH_PAGE = 'xxx'
+var SHEET_ID = 'id google sheet การตอบแบบฟอร์ม 1'
+//var LINE_TOKEN = 'xxx ออก Token เพื่อส่งไลน์ xxx' //. Test Yhafar : กำหนดตัวแปร Token แล้วใส่ เลข Token Line
+var EMAIL_TITLE ='ผลการทดสอบผ่านระบบ NARA-DTP วิชาภาษาอังกฤษ ระดับ ป.6 (ระยะที่ 1) ปีการศึกษา 2566' 
+var EMAIL_TITLE_FAIL = 'ผลการทดสอบผ่านระบบ NARA-DTP วิชาภาษาอังกฤษ ระดับ ป.6 (ระยะที่ 1) ปีการศึกษา 2566'
+var SEARCH_PAGE = 'https://sites.google.com/sueksa.go.th/nara-dtp'   //xxx หน้าค้นหาเกียรติบัตร
 // กด save scirpt นี้ กดบ่อย ๆ ก็ดี
 // กำหนด trigger เป็น เมื่อส่ง form
 //--------------------------------จบ------------------------------------------
-//var email_column = 'ที่อยู่อีเมล'
+var email_column = 'peo.nara96000@sueksa.go.th'
 var date = new Date();
 var YEAR = date.getFullYear();
 
