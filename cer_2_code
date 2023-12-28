@@ -82,7 +82,7 @@ function createPdf(event) {
     var slides = copyDoc.getSlides();
     var templateSlide = slides[0];
     var shapes = templateSlide.getShapes();
-    var count, any_file, all_files, save_pdf_folder;//Define variables without assigning a value
+    var count, any_file, all_files, save_pdf_folder;    //Define variables without assigning a value
     save_pdf_folder = DriveApp.getFolderById(SAVE_FOLDER_ID);
     shapes.forEach(function (shape) {
       // shape.getText().replaceAllText("{{id}}", thaiNumber(certify_running_id));
@@ -101,6 +101,7 @@ function createPdf(event) {
     var pdf_download_url = pdf_file.getDownloadUrl()
     certify_sheet.appendRow([user_name,user_email, school_name, USER_SUBJECT,user_id, user_score, pdf_download_url]);
     save_pdf_folder.addFile(pdf_file);
+
     // Line Notify
     //notifyLine()
     // Send Email
