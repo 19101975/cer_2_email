@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<base target="_top">
+	<?!= include('css'); ?>
+</head>
+<body>
+	<div class="container">
+		<div class="row justify-content-md-center">
+			<div class="col-md-12">
+				<div class="card  border mb-8" style="max-width:100rem;">
+					<!-- เริ่ม Menu bar -->
+					<nav class="navbar navbar-expand-lg navbar-white bd-orange-500">
+						<div class="container">
+							<h5 class="Sarabun text-white"><i class="fas fa-search"></i> ระบบสืบค้นเกียรติบัตร รายวิชาภาษาอังกฤษ แบบทดสอบระยะที่ 1</h5>  <!-->แก้จุดที่ 5-->
+							<div class="collapse navbar-collapse" id="navbarColor03">
+								<ul class="navbar-nav mr-auto w-100 justify-content-end">
+								</ul>
+							</div>
+						</div>
+					</nav>
+					<!-- ปิด Menu bar -->
+					<main>
+						<div class="col-12 col-md-6 col-lg-3">
+							<input type="hidden" id="name">
+            </div>
+							<!-- เริ่มต้นเนื้อหา container -->
+							<div class="container">
+								<br>
+								<center>
+									<span id="resp-spinner5" class="spinner-grow spinner-grow-sm text-danger d-none" role="status" aria-hidden="true"></span>
+									<span id="resp-spinner6" class="spinner-grow spinner-grow-sm text-warning d-none" role="status" aria-hidden="true"></span>
+									<span id="resp-spinner7" class="spinner-grow spinner-grow-sm text-success d-none" role="status" aria-hidden="true"></span>
+									<span id="resp-spinner8" class="spinner-grow spinner-grow-sm text-info d-none" role="status" aria-hidden="true"></span>
+									<span id="resp-spinner9" class="spinner-grow spinner-grow-sm text-primary d-none" role="status" aria-hidden="true"></span>
+									<span id="resp-spinner10" class="spinner-grow spinner-grow-sm text-dark d-none" role="status" aria-hidden="true"></span>
+                  <span id="resp-spinner11" class="spinner-grow spinner-grow-sm text-dark d-none" role="status" aria-hidden="true"></span>
+								</center>
+								<table id="data-table" class="table table-striped nowrap" style="width:100%">
+									<thead class="p-3 mb-2 bd-orange-500 text-white"></thead>
+								</table>
+					<!-- แก้จุดที่ 6-->
+          <!-- <center><iframe
+										src="https://docs.google.com/forms/d/e/1FAIpQLSdxQ-aTOA-GdWOY3K8IFAWp8Z6aVnlvqcN8d2w4QZwvdM4Wbg/viewform?embedded=true" 
+										width="100%" height="1060" frameborder="0"></iframe></center> -->
+						</div>
+             <center><h6 class="Sarabun text-primary"><i class="fas fa-user"></i> พัฒนาระบบโดย ศธจ. นราธิวาส </h6></center> <!-- แก้จุดที่ 7-->
+					</main>
+				</div>
+			</div>
+		</div>
+	</div>
+	<?!= include('js'); ?>
+</body>
+</html>
