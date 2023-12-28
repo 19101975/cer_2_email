@@ -1,0 +1,343 @@
+var TEMPLATE_ID = '10fT8whSPhbk_xlqn9v_8bN5RqskiN2s_xd9oqn_9IA0' // *id google slide เกียรติบัตร  //แก้จุดที่ 1
+var TOTAL_SCORE = 15     // ระบุจำนวนข้อสอบที่มี 
+var PASS_PERCENT = 80      // กำหนดเกณฑ์ผ่าน
+var SAVE_FOLDER_ID = '1mxmFWk7ObUSv-jTOyQI6uPnNyMPNECC9';  //สร้าง folder เก็บ pdf ตั้งชื่อ เปิดแชร์ ให้คนมีลิงก์ ดูได้ เอา id มาวาง //แก้จุดที่ 2
+var USER_SUBJECT = 'ภาษาอังกฤษ'     // วิชาที่สอบ
+var SHEET_ID = '1r0H3KKwwIdHLkrU0ZwtJY270ZzVTX_u1isGO5qfbgec'
+var LINE_TOKEN = 'A16GcDRECpLuO06kNxAr5EkptC6ilWXkFKNybydoKzV' //. Test Yhafar : กำหนดตัวแปร Token แล้วใส่ เลข Token Line
+var EMAIL_TITLE ='แจ้งส่งเกียรติบัตร แบบทดสอบออนไลน์ O-NET ชั้นประถมศึกษาปีที่ 6 วิชาภาษาอังกฤษ ระยะที่ 1 ปีการศึกษา 2565' 
+var EMAIL_TITLE_FAIL = 'แจ้งผลสอบ แบบทดสอบออนไลน์ O-NET ชั้นประถมศึกษาปีที่ 6 วิชาภาษาอังกฤษ ระยะที่ 1 ปีการศึกษา 2565'
+var SEARCH_PAGE = 'https://sites.google.com/opse.moe.go.th/o-net-by-narapeo-2565/main-search/search-eng'
+// กด save scirpt นี้ กดบ่อย ๆ ก็ดี
+// กำหนด trigger เป็น เมื่อส่ง form
+//--------------------------------จบ------------------------------------------
+//var email_column = 'ที่อยู่อีเมล'
+var date = new Date();
+var YEAR = date.getFullYear();
+function createPdf(event) {
+  if (TEMPLATE_ID === '') {
+    throw new Error('TEMPLATE_ID needs to be defined in Code.gs')
+  }
+  var activeSheet
+  var activeRowIndex
+  var range
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheets = ss.getSheets()
+  var certify_sheet = sheets[1]
+  // var running_number_sheet = sheets[2]
+  if (typeof event === 'undefined') {
+    activeSheet = SpreadsheetApp.getActiveSheet()
+    if (activeSheet === null) {
+      throw new Error('Select a cell in the row that you want to use')
+    }
+    range = activeSheet.getActiveRange()
+    if (activeSheet === null) {
+      throw new Error('Select a cell in the row that you want to use')
+    }
+    activeRowIndex = range.getRowIndex()
+  } else {
+    range = event.range
+    activeSheet = range.getSheet()
+    activeRowIndex = range.getRowIndex()
+  }
+  //activeRowIndex=3
+  //var numberOfColumns = activeSheet.getLastColumn()
+  var numberOfColumns = 7
+  var activeRow = activeSheet.getRange(activeRowIndex, 1, 1, numberOfColumns).getValues()
+  var headerRow = activeSheet.getRange(1, 1, 1, numberOfColumns).getValues()
+  //Logger.log('active row : '+activeRow)
+  //Logger.log('haeader row : '+headerRow)
+  var columnIndex = 0
+  var headerValue
+  var activeCell
+  var ID = null
+  var recipient = null
+  var user_score = activeRow[0][1]  // คะแนน
+  var user_email = activeRow[0][2]
+  var user_name = activeRow[0][3]   // ชื่อ - สกุล  
+  var school_name = activeRow[0][4]
+  var user_id = activeRow[0][5]
+  var percentage = Utilities.formatString("%.2f", (user_score / TOTAL_SCORE) * 100);
+  //Logger.log(user_name+school_name+percentage)
+  //-------------------------------
+  if (percentage >= PASS_PERCENT) {
+    //------------------------------------------------------------
+    //-----Make a copy
+    var slide_file = DriveApp.getFileById(TEMPLATE_ID).makeCopy()
+    var copyFile = slide_file.makeCopy('V1_เกียรติบัตร' + '_'+USER_SUBJECT+'_'+user_name);
+    var copyId = copyFile.getId()
+    var copyDoc = SlidesApp.openById(copyId);
+    var slides = copyDoc.getSlides();
+    var templateSlide = slides[0];
+    var shapes = templateSlide.getShapes();
+    var count, any_file, all_files, save_pdf_folder;//Define variables without assigning a value
+    save_pdf_folder = DriveApp.getFolderById(SAVE_FOLDER_ID);
+    shapes.forEach(function (shape) {
+      // shape.getText().replaceAllText("{{id}}", thaiNumber(certify_running_id));
+      shape.getText().replaceAllText("{id}", thaiNumber(user_id));
+      shape.getText().replaceAllText("{name}", user_name);
+      // shape.getText().replaceAllText("{position}", user_position);
+      shape.getText().replaceAllText('{school}', school_name);
+      shape.getText().replaceAllText("{email}", user_email);
+      shape.getText().replaceAllText("{score}", thaiNumber(percentage));
+      shape.getText().replaceAllText("{date}", getThaiDate());
+      shape.getText().replaceAllText('{month}', getThaiMonth());
+      shape.getText().replaceAllText('{year}', getThaiYear());
+    });
+    copyDoc.saveAndClose()
+    var pdf_file = DriveApp.createFile(copyFile.getAs("application/pdf"));
+    var pdf_download_url = pdf_file.getDownloadUrl()
+    certify_sheet.appendRow([user_name,user_email, school_name, USER_SUBJECT,user_id, user_score, pdf_download_url]);
+    save_pdf_folder.addFile(pdf_file);
+    // Line Notify
+    //notifyLine()
+    // Send Email
+    //sendEmailPass()
+   
+    //-----
+    DriveApp.removeFile(pdf_file)
+
+  } else {
+   // Logger.log("ขอแสดงความเสียใจ คุณสอบไม่ผ่าน")
+    //sendEmailFail()
+  }
+  slide_file.setTrashed(true);
+  copyFile.setTrashed(true);
+}
+//  ออกเกียรติบัตรผู้ผ่านใหม่ทุกรายการ
+//  Create : 2023.01.22  by Yhafar
+function createPdfAll(event) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet()
+  var mySheet = ss.getSheetByName('การตอบแบบฟอร์ม 1')
+  var sheets = ss.getSheets()
+  var certify_sheet = sheets[1]
+  var numberRows = mySheet.getLastRow().toString();
+  var numberRows = numberRows.replace(".0","");
+  //Logger.log('number of row : '+numberRows);  //แถวสุดท้าย
+  var image = ''
+  let stickerPackage = ''
+  let stickerId = ''
+  var sendEmail = ''
+  var user_fullname = '',user_subject='',user_school=''
+  var checkSend='',checkUrl,tinyurl='',message=''
+//ถ้ามีผู้สอบจำนวนมากให้เพิ่มจำนวนแถว 550 
+  var start = 1629    // row start
+  var count = 1
+  for (var i = start; i <= numberRows; i++) {
+  //activeRowIndex=3
+  //var numberOfColumns = activeSheet.getLastColumn()
+  var numberOfColumns = 7
+  var activeRow = mySheet.getRange(i, 1, 1, numberOfColumns).getValues()
+  var headerRow = mySheet.getRange(1, 1, 1, numberOfColumns).getValues()
+  //Logger.log('active row : '+activeRow)
+  //Logger.log('haeader row : '+headerRow)
+  var columnIndex = 0
+  var headerValue
+  var activeCell
+  var ID = null
+  var recipient = null
+  var user_score = activeRow[0][1]  // คะแนน
+  var user_email = activeRow[0][2]
+  var user_name = activeRow[0][3]   // ชื่อ - สกุล  
+  var school_name = activeRow[0][4]
+  var user_id = activeRow[0][5]
+  var percentage = Utilities.formatString("%.2f", (user_score / TOTAL_SCORE) * 100);
+  //Logger.log(user_name+school_name+percentage)
+  //-------------------------------
+  if (percentage >= PASS_PERCENT) {
+    //------------------------------------------------------------
+    //-----Make a copy
+      var slide_file = DriveApp.getFileById(TEMPLATE_ID).makeCopy()
+      var copyFile = slide_file.makeCopy('V1_เกียรติบัตร' + '_'+USER_SUBJECT+'_'+user_name);
+      var copyId = copyFile.getId()
+      var copyDoc = SlidesApp.openById(copyId);
+      var slides = copyDoc.getSlides();
+      var templateSlide = slides[0];
+      var shapes = templateSlide.getShapes();
+      var count, any_file, all_files, save_pdf_folder;//Define variables without assigning a value
+    save_pdf_folder = DriveApp.getFolderById(SAVE_FOLDER_ID);
+    message = 'Row : '+ i + '\nName : '+user_name +'\n' + 'Score : '+percentage+'\nCount : '+count
+    Logger.log(message)
+    shapes.forEach(function (shape) {
+      // shape.getText().replaceAllText("{{id}}", thaiNumber(certify_running_id));
+      shape.getText().replaceAllText("{id}", thaiNumber(user_id));
+      shape.getText().replaceAllText("{name}", user_name);
+      // shape.getText().replaceAllText("{position}", user_position);
+      shape.getText().replaceAllText('{school}', school_name);
+      shape.getText().replaceAllText("{email}", user_email);
+      shape.getText().replaceAllText("{score}", thaiNumber(percentage));
+      shape.getText().replaceAllText("{date}", getThaiDate());
+      shape.getText().replaceAllText('{month}', getThaiMonth());
+      shape.getText().replaceAllText('{year}', getThaiYear());
+    });
+    copyDoc.saveAndClose()
+    var pdf_file = DriveApp.createFile(copyFile.getAs("application/pdf"));
+    var pdf_download_url = pdf_file.getDownloadUrl()
+       certify_sheet.appendRow([user_name,user_email, school_name, USER_SUBJECT,user_id, user_score, pdf_download_url]);
+       save_pdf_folder.addFile(pdf_file);
+    //-- Line Notify
+     //       notifyLine();
+    //-- Send Email
+    //sendEmailPass();
+    //-----
+   //    DriveApp.removeFile(pdf_file)
+    count++
+  } else {
+   // Logger.log("ขอแสดงความเสียใจ คุณสอบไม่ผ่าน")
+   // sendEmailFail()
+  }
+     slide_file.setTrashed(true);
+     copyFile.setTrashed(true);
+}
+}
+function getThaiDate() {
+  var date = new Date();
+  var DATE = date.getDate();
+  return thaiNumber(DATE);
+}
+function getThaiMonth() {
+  var date = new Date();
+  var DATE = date.getDate();
+  var MONTH = ["มกราคม", "กุมภาพันธ์", "มีนาคม", "เมษายน", "พฤษภาคม", "มิถุนายน", "กรกฎาคม", "สิงหาคม", "กันยายน", "ตุลาคม", "พฤศจิกายน", "ธันวาคม"];
+  var THAI_MONTH = MONTH[date.getMonth()];
+  return THAI_MONTH
+}
+function getThaiYear() {
+  var date = new Date();
+  var YEAR = date.getFullYear();
+  var THAI_YEAR = YEAR + 543;
+  return thaiNumber(THAI_YEAR);
+}
+function thaiNumber(num) {
+  var array = { "1": "๑", "2": "๒", "3": "๓", "4": "๔", "5": "๕", "6": "๖", "7": "๗", "8": "๘", "9": "๙", "0": "๐" };
+  var str = num.toString();
+  for (var val in array) {
+    str = str.split(val).join(array[val]);
+  }
+  return str;
+}
+///--ส่งไลน์
+function notifyLine() {
+  //เปลี่ยน Token    //แก้จุดที่ 3                
+  //token ห้องระเบิด QDCAMI3R66JZuotuLg0rvcHhH7ENMPX4cgRrRKEZhIo
+  var ss = SpreadsheetApp.getActive()
+  var mySheet = ss.getSheetByName('cer')//sheet2
+  var numberRows = mySheet.getLastRow().toString();
+  var numberRows = numberRows.replace(".0","");
+  //Logger.log('number of row : '+numberRows);  //แถวสุดท้าย
+  var image = ''
+  let stickerPackage = ''
+  let stickerId = ''
+  var sendEmail = ''
+  var user_fullname = '',user_subject='',user_school=''
+  var checkSend='',checkUrl,tinyurl='',message=''
+//ถ้ามีผู้สอบจำนวนมากให้เพิ่มจำนวนแถว 550 
+  for (var i = 2; i <= numberRows; i++) {
+    checkUrl = mySheet.getRange(i, 7).getValue() // url
+    checkSend = mySheet.getRange(i, 9).getValue() //สถานะการส่ง
+    if (checkUrl != '' && checkSend != '✅') {
+      user_fullname = mySheet.getRange(i, 1).getValue() //ชื่อ - สกุล
+      sendEmail = mySheet.getRange(i, 2).getValue() //โรงเรียน
+      user_school = mySheet.getRange(i, 3).getValue() //โรงเรียน
+      user_subject = mySheet.getRange(i, 4).getValue() // วิชา
+      user_url = mySheet.getRange(i, 7).getValue() // url เกียรติบัตร
+      //Logger.log('data 4 : '+data4)
+      tinyurl = UrlFetchApp.fetch('https://tinyurl.com/api-create.php?url=' + encodeURI(user_url));
+      message = '\nยินดีด้วยคุณสอบผ่าน' + '\nชื่อ-สกุล : ' + user_fullname + '\nโรงเรียน : ' + user_school + '\nวิชา : ' + user_subject + 'แบบทดสอบระยะที่ 1'+'\nโหลดเกียรติบัตร : ' + '\n' +  tinyurl
+      mySheet.getRange(i, 9).setValue('✅')
+      Logger.log(message)
+      NotifyApp.sendNotify(LINE_TOKEN, message, image, stickerPackage, stickerId)
+    }
+  }
+}
+function sendEmailPass() {
+  //กำหนดตัวแปร Token แล้วใส่ เลข Token Line
+  var ss = SpreadsheetApp.getActive()
+  var mySheet = ss.getSheetByName('cer')//sheet2
+  var numberRows = mySheet.getLastRow().toString();
+      numberRows = numberRows.replace(".0","");
+  //Logger.log('number of row : '+numberRows);  //แถวสุดท้าย
+  var user_fullname = ''
+  var user_email = ''
+  // var user_subject =''
+  var user_url =''
+  var user_school =''
+  var checkUrl=''
+  var checkSend='',tinyurl='',message=''
+  for (var i = 2; i <= numberRows; i++) {
+    checkUrl = mySheet.getRange(i, 7).getValue() // url
+    checkSend = mySheet.getRange(i, 8).getValue() //สถานะการส่ง
+    if (checkUrl != '' && checkSend != '✅') {
+      user_fullname = mySheet.getRange(i, 1).getValue() //ชื่อ - สกุล
+      user_email = mySheet.getRange(i, 2).getValue() // e-mail
+      user_school = mySheet.getRange(i, 3).getValue() //โรงเรียน
+      // user_subject = mySheet.getRange(i, 4).getValue() // วิชา
+      user_url = mySheet.getRange(i, 7).getValue() // url เกียรติบัตร
+      //Logger.log('data 4 : '+data4)
+      tinyurl = UrlFetchApp.fetch('https://tinyurl.com/api-create.php?url=' + encodeURI(user_url));
+      message = '\nยินดีด้วยคุณสอบผ่าน' + '\nชื่อ-สกุล ' + user_fullname + '\nโรงเรียน ' + user_school  + '\nวิชา ' + USER_SUBJECT + '\nโหลดเกียรติบัตร' + '\n' +  tinyurl + '\nหรือค้นหาเกียรติบัตรได้ที่ : ✍️ \n'+ SEARCH_PAGE
+      //NotifyApp.sendNotify(token, message, image, stickerPackage, stickerId)
+       // send e-mail 
+      //Logger.log('send : '+message) 
+      mySheet.getRange(i, 8).setValue('✅')
+      MailApp.sendEmail(user_email,EMAIL_TITLE,message) 
+    }
+  }
+}
+function sendEmailFail() {
+  //กำหนดตัวแปร Token แล้วใส่ เลข Token Line
+  var ss = SpreadsheetApp.getActive()
+  var mySheet = ss.getSheetByName('การตอบแบบฟอร์ม 1')//sheet2
+  var numberRows = mySheet.getLastRow().toString();
+      numberRows = numberRows.replace(".0","");
+  //Logger.log('number of row : '+numberRows);  //แถวสุดท้าย
+  var user_fullname = ''
+  var user_email = ''
+  var user_score =''
+  var user_url =''
+  var user_school =''
+  var checkUrl=''
+  var checkSend='',tinyurl='',message=''
+      user_score = mySheet.getRange(numberRows, 2).getValue() // score
+      user_email = mySheet.getRange(numberRows, 3).getValue() // e-mail
+      user_fullname = mySheet.getRange(numberRows, 4).getValue() //ชื่อ - สกุล
+      user_school = mySheet.getRange(numberRows, 5).getValue() //โรงเรียน
+      message = '\nขอแสดงเสียใจด้วย คุณสอบไม่ผ่าน' + '\nชื่อ-สกุล ' + user_fullname + '\nโรงเรียน ' + user_school  + '\nวิชา ' + USER_SUBJECT + '\nคะแนนที่ได้ '+ user_score + '\nพยายามใหม่อีกครั้ง'
+      //NotifyApp.sendNotify(token, message, image, stickerPackage, stickerId)
+       // send e-mail 
+      //Logger.log('send : '+message) 
+      mySheet.getRange(numberRows, 23).setValue('✅')  // สถานะส่ง email กรณี สอบไม่ผ่าน
+      Logger.log(message)
+      MailApp.sendEmail(user_email,EMAIL_TITLE_FAIL,message) 
+}
+//ID library Line notify
+//1vXbZfRP-7AqwqV7k0fGAnVjCe34pYyI2WdZBJw1Y8U0_DuEbo5fN32P9
+//เปิด  Drive API
+//------ระบบค้นหาเกียรติบัตร-----
+function doGet(e) {
+  return HtmlService.createTemplateFromFile('index').evaluate()
+    .setTitle("สืบค้นเกียรติบัตร")
+    .addMetaTag('viewport', 'width=device-width , initial-scale=1')
+    .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
+}
+/** เรียก URL */
+function getUrl() {
+  var url = ScriptApp.getService().getUrl();
+  return url;
+}
+/** ดึงไฟล์ */
+function include(filename) {
+  return HtmlService.createHtmlOutputFromFile(filename).getContent();
+}
+/** ดึงข้อมูลให้ไปแสดง DataTable */
+function getData() {
+  //var spreadSheetId = '15ivzxvWfqLsjAL337l65IrKWb1p8uTRcH9-GSP_t7Y4'; // ID ชีต //แก้จุดที่ 4
+  var dataRange = "cer!A2:Z"; // ชื่อชีตและช่วงของข้อมูล
+  var range = Sheets.Spreadsheets.Values.get(SHEET_ID, dataRange);
+  var values = range.values;
+  values = values.map(function (row) {
+    return row.concat([0]);
+  });
+  Logger.log(values);
+  return values;
+}
