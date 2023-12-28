@@ -1,3 +1,6 @@
+// ID library Line notify: 1vXbZfRP-7AqwqV7k0fGAnVjCe34pYyI2WdZBJw1Y8U0_DuEbo5fN32P9
+// เปิด Drive API, Sheet API, Slide API
+
 var TEMPLATE_ID = '10fT8whSPhbk_xlqn9v_8bN5RqskiN2s_xd9oqn_9IA0' // *id google slide เกียรติบัตร  //แก้จุดที่ 1
 var TOTAL_SCORE = 15     // ระบุจำนวนข้อสอบที่มี 
 var PASS_PERCENT = 80      // กำหนดเกณฑ์ผ่าน
